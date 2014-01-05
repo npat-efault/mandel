@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>The Mandelbrot Set</title>
+<meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.Jcrop.min.js"></script>
+<script language="Javascript">
+  
+  $(function(){ 
+       $('#mandel').Jcrop({
+           onSelect: showCoords,
+           aspectRatio: getAspect()
+       }); 
+   });
+
+  function getAspect()
+  {
+      var w = $('#mandel').width();
+      var h = $('#mandel').height();
+
+      return w / h;
+  }
+
+  function view2world(vc)
+  {
+      var w = $('#mandel').width();
+      var h = $('#mandel').height();
+      var x0 = parseFloat($('#cx0').text());
+      var x1 = parseFloat($('#cx1').text());
+      var y0 = parseFloat($('#cy0').text());
+      var y1 = parseFloat($('#cy1').text());
+      var dx = x1 - x0;
+      var dy = y1 - y0;
+      var wc = {};
+
+      wc.x = x0 + vc.x / w * dx;
+      wc.y = y0 + vc.y / h * dy;
+      wc.x2 = x0 + vc.x2 / w * dx;
+      wc.y2 = y0 + vc.y2 / h * dy;
+
+      return wc;
+  }
+
+  function showCoords(vc)
+  {
+      var wc = view2world(vc);
+      $('#x0').val(wc.x);
+      $('#y0').val(wc.y);
+      $('#x1').val(wc.x2);
+      $('#y1').val(wc.y2);
+  };
+
+</script>
+
+<link rel="stylesheet" href="../css/jquery.Jcrop.min.css" type="text/css" />
+</head>
+
+<body>
+
+<h1>The Mandelbrot Set: z = z<sup>2</sup> + c</h1>
+
+<div>
+  <img id="mandel"
+       alt="[Mandelbrot set]" 
+       width="{{.Sx}}" height="{{.Sy}}"
+       src="/mandel?{{.URL}}">
+</div>
+
+<div style="width:{{.Sx}}px" align="right">
+  <div>
+  <b>Real:</b> [<span id="cx0">{{.X0}}</span> ... 
+                <span id="cx1">{{.X1}}</span>]
+  </div>
+  <div>
+  <b>Imag:</b> [<span id="cy0">{{.Y0}}</span> ... 
+                <span id="cy1">{{.Y1}}</span>]
+  </div>
+</div>
+ 
+<form action="/" method="GET">
+<b>Parameters:</b>
+<br /><label>Size: 
+      <input type="text" name="sx" value="{{.Sx}}" />
+    </label>
+    <label>* 
+      <input type="text" name="sy" value="{{.Sy}}" />
+    </label>
+<br /><label>Real: 
+      <input id="x0" type="text" name="x0" value="{{.X0}}" />
+    </label> 
+    <label>-
+      <input id="x1" type="text" name="x1" value="{{.X1}}" />
+    </label>
+<br /><label>Imag: 
+      <input id="y0" type="text" name="y0" value="{{.Y0}}" />
+    </label>
+    <label>-
+      <input id="y1" type="text" name="y1" value="{{.Y1}}" />
+    </label>
+<br /><label>Iter: 
+      <input type="text" name="iter" value="{{.Iter}}" />
+    </label>
+<br /><input type="submit" value="Replot" /> [<a href="/">Reset</a>]
+</form>
+
+</body>
+</html>
