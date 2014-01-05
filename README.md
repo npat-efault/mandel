@@ -16,8 +16,8 @@ In order to build "mandel" you need to have package
 First install the prerequisites:
 
 ```
-  $ mkdir -p $GOPATH/github.com/npat-efault/
-  $ cd $GOPATH/github.com/npat-efault
+  $ mkdir -p $GOPATH/src/github.com/npat-efault/
+  $ cd $GOPATH/src/github.com/npat-efault
   $ git clone https://github.com/npat-efault/bundle
   $ cd ./bundle
   $ ./all.sh install
@@ -26,7 +26,7 @@ First install the prerequisites:
 Then install "mandel":
 
 ```
-  $ cd $GOPATH/github.com/npat-efault
+  $ cd $GOPATH/src/github.com/npat-efault
   $ git clone https://github.com/npat-efault/mandel
   $ cd ./mandel
   $ ./all.sh install
