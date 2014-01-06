@@ -61,49 +61,63 @@
 
 <h1>The Mandelbrot Set: z = z<sup>2</sup> + c</h1>
 
-<div>
+<div id="plot">
+<div id="plot-img">
   <img id="mandel"
        alt="[Mandelbrot set]" 
        width="{{.Sx}}" height="{{.Sy}}"
        src="/mandel?{{.URL}}">
 </div>
 
-<div style="width:{{.Sx}}px" align="right">
-  <div>
+<div id="plot-domain" style="width:{{.Sx}}px" align="right">
+  <div id="plot-domain-real">
   <b>Real:</b> [<span id="cx0">{{.X0}}</span> ... 
                 <span id="cx1">{{.X1}}</span>]
   </div>
-  <div>
+  <div id="plot-domain-imag">
   <b>Imag:</b> [<span id="cy0">{{.Y0}}</span> ... 
                 <span id="cy1">{{.Y1}}</span>]
   </div>
 </div>
+</div>
  
+<div id="param">
 <form action="/" method="GET">
 <b>Parameters:</b>
-<br /><label>Size: 
-      <input type="text" name="sx" value="{{.Sx}}" />
-    </label>
-    <label>* 
-      <input type="text" name="sy" value="{{.Sy}}" />
-    </label>
-<br /><label>Real: 
-      <input id="x0" type="text" name="x0" value="{{.X0}}" />
-    </label> 
-    <label>-
-      <input id="x1" type="text" name="x1" value="{{.X1}}" />
-    </label>
-<br /><label>Imag: 
-      <input id="y0" type="text" name="y0" value="{{.Y0}}" />
-    </label>
-    <label>-
-      <input id="y1" type="text" name="y1" value="{{.Y1}}" />
-    </label>
-<br /><label>Iter: 
-      <input type="text" name="iter" value="{{.Iter}}" />
-    </label>
-<br /><input type="submit" value="Replot" /> [<a href="/">Reset</a>]
+<div id="param-domain">
+<div id="param-domain-real">
+  <label for="x0">Real:</label> 
+  <input id="x0" type="text" size="22" name="x0" value="{{.X0}}" />
+  <label for="x1"> - </label>
+  <input id="x1" type="text" size="22" name="x1" value="{{.X1}}" />
+</div>
+<div id="param-domain-imag">
+  <label for="y0">Imag:</label> 
+  <input id="y0" type="text" size="22" name="y0" value="{{.Y0}}" />
+  <label for="y1"> - </label>
+  <input id="y1" type="text" size="22" name="y1" value="{{.Y1}}" />
+</div>
+</div>
+<div id="param-size">
+  <label for="sx">Size:</label> 
+  <input id="sx" type="text" size="5" name="sx" value="{{.Sx}}" />
+  <label for="sy"> * </label> 
+  <input id="sy" type="text" size="5" name="sy" value="{{.Sy}}" />
+</div>
+<div id="param-other">
+  <label for="iter">Iter:</label> 
+  <input id="iter" size="5" type="text" name="iter" value="{{.Iter}}" />
+</div>
+<div id="param-actions">
+  <input type="submit" value="Replot" /> [<a href="/">Reset</a>]
+</div>
 </form>
+</div>
+
+<div id="source" align="right">
+<hr>
+Source: <a href="http://github.com/npat-efault/mandel">github.com/npat-efault/mandel</a>
+</div>
 
 </body>
 </html>

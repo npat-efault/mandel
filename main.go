@@ -106,7 +106,7 @@ func getParams(r *http.Request) *params {
 	p.Sy = valInt(r, "sy", minSy, maxSy, dflSy)
 	// Parse "iter" (# of iterations) parameter
 	p.Iter = valInt(r, "iter", minIter, maxIter, dflIter)
-	// Parse x0, x1, y0, y1 (coordinates) parameter
+	// Parse x0, x1, y0, y1 (coordinates) parameters
 	p.X0 = valFloat64(r, "x0", minX, maxX, dflX0)
 	p.X1 = valFloat64(r, "x1", minX, maxX, dflX1)
 	p.Y0 = valFloat64(r, "y0", minY, maxY, dflY0)
