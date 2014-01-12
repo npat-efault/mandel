@@ -1,4 +1,4 @@
-// Functions for generating and displaying gradient palettes
+// Functions for generating gradient palettes
 
 package main
 

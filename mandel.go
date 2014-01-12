@@ -162,3 +162,13 @@ func (m *MandelImg) calcHisto() {
 		m.cnhisto[i] /= float64(total)
 	}
 }
+
+// Repalette creates a copy of the image with a different palette and
+// returns a pointer to it. The two images (the original and returned
+// copy) share the same data (the same pixel array, and the same
+// histogram arrays).
+func (m *MandelImg) Repalette(p color.Palette) *MandelImg {
+	mn := *m
+	mn.Palette = p
+	return &mn
+}

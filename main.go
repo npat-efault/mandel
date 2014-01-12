@@ -35,7 +35,7 @@ const (
 	// Number of iterations to perform for every pixel, when
 	// rendering the image
 	minIter = 16
-	maxIter = 10240
+	maxIter = 100000
 	dflIter = 64
 	// Function domain:
 	// (Real: [minX .. maxX], Imag: [minY .. maxY])
@@ -60,6 +60,8 @@ var palettes = map[string]color.Palette{
 	"Gray Reverse": pal256GrayR}
 
 var templates *template.Template
+
+var imgCache *cache
 
 func renderTmpl(w http.ResponseWriter, t string, d interface{}) {
 	err := templates.ExecuteTemplate(w, t+".html", d)
@@ -142,11 +144,21 @@ func getParams(r *http.Request) *params {
 }
 
 func mandelHandler(w http.ResponseWriter, r *http.Request) {
-	// Parse params and calculate image
 	p := getParams(r)
-	img, _ := NewMandelImg(p.Sx, p.Sy, p.Palettes[p.Pal],
-		complex(p.X0, p.Y0), complex(p.X1, p.Y1), p.Iter, 100.0)
-	// Allow caching forever
+	// Lookup image in cache
+	img := imgCache.ReqLookup(p)
+	if img == nil {
+		// Not found, calculate
+		img, _ = NewMandelImg(p.Sx, p.Sy, p.Palettes[p.Pal],
+			complex(p.X0, p.Y0), complex(p.X1, p.Y1),
+			p.Iter, 100.0)
+		// Add to cache
+		imgCache.ReqAdd(img)
+	} else {
+		// Found in cache, just change the palette
+		img = img.Repalette(p.Palettes[p.Pal])
+	}
+	// Allow client-caching (forever)
 	t := time.Now().Add(365 * 24 * time.Hour)
 	w.Header().Set("Expires", t.Format(http.TimeFormat))
 	// Encode and send image
@@ -167,6 +179,7 @@ func main() {
 		Usage(path.Base(os.Args[0]))
 		os.Exit(1)
 	}
+	imgCache = NewCache()
 	templates = parseEntries(_bundleIdx, "templates/", ".html")
 	http.Handle("/js/", serveEntries(_bundleIdx, "js/", "/js/"))
 	http.Handle("/css/", serveEntries(_bundleIdx, "css/", "/css/"))

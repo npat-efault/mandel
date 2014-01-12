@@ -6,10 +6,13 @@ Serve images of the Mandelbrot set over HTTP.
 "mandel" is a simple web application, written in Go, that renders
 images of the all-familiar [Mandelbrot
 Set](http://en.wikipedia.org/wiki/Mandelbrot_set) and serves them over
-HTTP. Features:
+HTTP. 
+
+Features:
 
 - Zoom-in on any area of the set.
 - Select palette to use when rendering the set
+- Change palette without recalculating the set
 - Select image size (WxH in pixels)
 - Select maximum iteration count
 - Color using the [histogram
