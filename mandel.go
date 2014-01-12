@@ -9,9 +9,9 @@ import (
 	"math/cmplx"
 )
 
-// MandelImg is a Mandelbrot-set image. It implements the image.Image
+// mandelImg is a Mandelbrot-set image. It implements the image.Image
 // interface.
-type MandelImg struct {
+type mandelImg struct {
 	// Function domain
 	C0, C1 complex128
 	// Escape after MaxIter
@@ -33,13 +33,13 @@ type MandelImg struct {
 
 // NewMandel calculates and returns a new Mandelbrot-set
 // image. Returns non-nil error if invalid parameters are given.
-func NewMandelImg(width, height int, p color.Palette, c0, c1 complex128,
-	iter int, radius float64) (*MandelImg, error) {
+func newMandelImg(width, height int, p color.Palette, c0, c1 complex128,
+	iter int, radius float64) (*mandelImg, error) {
 	if iter <= 0 || radius <= 0 || width <= 0 || height <= 0 {
-		err := errors.New("NewMandelImg: Invalid parameters")
+		err := errors.New("newMandelImg: Invalid parameters")
 		return nil, err
 	}
-	m := &MandelImg{}
+	m := &mandelImg{}
 	m.C0, m.C1 = c0, c1
 	m.MaxIter = iter
 	m.Radius = radius
@@ -54,13 +54,13 @@ func NewMandelImg(width, height int, p color.Palette, c0, c1 complex128,
 	return m, nil
 }
 
-func (m *MandelImg) ColorModel() color.Model { return color.RGBAModel }
+func (m *mandelImg) ColorModel() color.Model { return color.RGBAModel }
 
-func (m *MandelImg) Bounds() image.Rectangle {
+func (m *mandelImg) Bounds() image.Rectangle {
 	return image.Rect(0, 0, m.w, m.h)
 }
 
-func (m *MandelImg) At(x, y int) color.Color {
+func (m *mandelImg) At(x, y int) color.Color {
 	if !m.pixIn(x, y) {
 		return color.RGBA{}
 	}
@@ -76,7 +76,7 @@ func (m *MandelImg) At(x, y int) color.Color {
 
 // Opaque scans the image's palette and returns true if all colors are
 // fully opaque.
-func (m *MandelImg) Opaque() bool {
+func (m *mandelImg) Opaque() bool {
 	for _, c := range m.Palette {
 		_, _, _, a := c.RGBA()
 		if a != 0xffff {
@@ -89,7 +89,7 @@ func (m *MandelImg) Opaque() bool {
 // setIter sets the iteration count for the pixel at the given
 // coordinates to "iter". It also updates the histogram by
 // incrementing histo[iter].
-func (m *MandelImg) setIter(x, y int, iter int) {
+func (m *mandelImg) setIter(x, y int, iter int) {
 	if !m.pixIn(x, y) {
 		return
 	}
@@ -105,19 +105,19 @@ func (m *MandelImg) setIter(x, y int, iter int) {
 
 // pixOffset returns the pix-array index of the pixel at the given
 // coordinates.
-func (m *MandelImg) pixOffset(x, y int) int {
+func (m *mandelImg) pixOffset(x, y int) int {
 	return y*m.w + x
 }
 
 // pixIn returns true if the pixel at the given coordinates is inside
 // the image.
-func (m *MandelImg) pixIn(x, y int) bool {
+func (m *mandelImg) pixIn(x, y int) bool {
 	return x >= 0 && x < m.w && y >= 0 && y < m.h
 }
 
 // calcPix calculates pixel values for the image as well as the image
 // histogram.
-func (m *MandelImg) calcPix() {
+func (m *mandelImg) calcPix() {
 	// Deltas for stepping on the complex plane
 	dx := (real(m.C1) - real(m.C0)) / float64(m.w)
 	dy := (imag(m.C1) - imag(m.C0)) / float64(m.h)
@@ -143,7 +143,7 @@ func (m *MandelImg) calcPix() {
 // image. The image histogram (the non-cumulative one) must have
 // already been calculated before calling calcHisto (i.e. calcPix must
 // be called before calcHisto).
-func (m *MandelImg) calcHisto() {
+func (m *mandelImg) calcHisto() {
 	// Calculate cumulative histogram: cnhisto[i] is # of pixels
 	// with iter-count <= i. Exclude pixels with iter-count ==
 	// MaxIter (i.e. pixels IN the mandelbrot set) from the
@@ -167,7 +167,7 @@ func (m *MandelImg) calcHisto() {
 // returns a pointer to it. The two images (the original and returned
 // copy) share the same data (the same pixel array, and the same
 // histogram arrays).
-func (m *MandelImg) Repalette(p color.Palette) *MandelImg {
+func (m *mandelImg) Repalette(p color.Palette) *mandelImg {
 	mn := *m
 	mn.Palette = p
 	return &mn

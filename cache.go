@@ -10,10 +10,10 @@ import (
 const cacheSize = 10
 
 type cache struct {
-	// List of *MandelImg (the cache itself)
+	// List of *mandelImg (the cache itself)
 	l *list.List
 	// Channel to receive add-image requests from
-	chAdd chan *MandelImg
+	chAdd chan *mandelImg
 	// Channel to receive lookup-image requests from
 	chLookup chan lookupReq
 }
@@ -24,10 +24,10 @@ type lookupReq struct {
 	// Image parameters
 	p *params
 	// Chan to send reply to
-	ch chan *MandelImg
+	ch chan *mandelImg
 }
 
-func (c *cache) match(p *params, m *MandelImg) bool {
+func (c *cache) match(p *params, m *mandelImg) bool {
 	return p.Sx == m.Bounds().Dx() &&
 		p.Sy == m.Bounds().Dy() &&
 		p.X0 == real(m.C0) &&
@@ -37,9 +37,9 @@ func (c *cache) match(p *params, m *MandelImg) bool {
 		p.Iter == m.MaxIter
 }
 
-func (c *cache) search(p *params) *MandelImg {
+func (c *cache) search(p *params) *mandelImg {
 	for e := c.l.Front(); e != nil; e = e.Next() {
-		ce := e.Value.(*MandelImg)
+		ce := e.Value.(*mandelImg)
 		if c.match(p, ce) {
 			return ce
 		}
@@ -47,7 +47,7 @@ func (c *cache) search(p *params) *MandelImg {
 	return nil
 }
 
-func (c *cache) add(m *MandelImg) {
+func (c *cache) add(m *mandelImg) {
 	p := params{
 		Sx:   m.Bounds().Dx(),
 		Sy:   m.Bounds().Dy(),
@@ -73,8 +73,8 @@ func (c *cache) add(m *MandelImg) {
 // palette than the one specified in the request parameters. Because
 // of this, you must always Repalette images received from the cache
 // to make sure they are rendered with the correct palette.
-func (c *cache) ReqLookup(p *params) *MandelImg {
-	ch := make(chan *MandelImg)
+func (c *cache) ReqLookup(p *params) *mandelImg {
+	ch := make(chan *mandelImg)
 	r := lookupReq{p, ch}
 	c.chLookup <- r
 	return <-ch
@@ -85,18 +85,18 @@ func (c *cache) ReqLookup(p *params) *MandelImg {
 // (nothing happens in this case). The oldest cache entry may be
 // evicted as a result of calling ReqAdd (if the cache size has
 // reached cacheSize).
-func (c *cache) ReqAdd(m *MandelImg) {
+func (c *cache) ReqAdd(m *mandelImg) {
 	c.chAdd <- m
 }
 
 // NewCache creates and initializes an image cache and starts the
 // goroutine that receives and processes cache-lookup and cache-add
 // requests. Returns a pointer to the newly created cache.
-func NewCache() *cache {
+func newCache() *cache {
 	c := new(cache)
 	c.l = list.New()
 	c.chLookup = make(chan lookupReq)
-	c.chAdd = make(chan *MandelImg)
+	c.chAdd = make(chan *mandelImg)
 	go func(c *cache) {
 		for {
 			select {

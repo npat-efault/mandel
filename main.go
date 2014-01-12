@@ -149,7 +149,7 @@ func mandelHandler(w http.ResponseWriter, r *http.Request) {
 	img := imgCache.ReqLookup(p)
 	if img == nil {
 		// Not found, calculate
-		img, _ = NewMandelImg(p.Sx, p.Sy, p.Palettes[p.Pal],
+		img, _ = newMandelImg(p.Sx, p.Sy, p.Palettes[p.Pal],
 			complex(p.X0, p.Y0), complex(p.X1, p.Y1),
 			p.Iter, 100.0)
 		// Add to cache
@@ -179,7 +179,7 @@ func main() {
 		Usage(path.Base(os.Args[0]))
 		os.Exit(1)
 	}
-	imgCache = NewCache()
+	imgCache = newCache()
 	templates = parseEntries(_bundleIdx, "templates/", ".html")
 	http.Handle("/js/", serveEntries(_bundleIdx, "js/", "/js/"))
 	http.Handle("/css/", serveEntries(_bundleIdx, "css/", "/css/"))
