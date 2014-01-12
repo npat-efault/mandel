@@ -22,7 +22,7 @@ HTTP. Features:
 ## Example Renderings
 
 [A few pictures](https://github.com/npat-efault/mandel/wiki/Example-Renderings)
-Rendered with "mandel".
+rendered with "mandel".
 
 ## Install
 
