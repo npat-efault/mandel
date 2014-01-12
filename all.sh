@@ -11,7 +11,7 @@ else
 fi
 
 case "$cmd" in
-    build | install)
+    build | install | test)
         mkbundle -v -g -skip="*~" -o="$d"/data.go "$DATADIR"
 	go $cmd "$@" "$d"
 	;;

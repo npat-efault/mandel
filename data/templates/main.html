@@ -12,7 +12,17 @@
        $('#mandel').Jcrop({
            onSelect: showCoords,
            aspectRatio: getAspect()
-       }); 
+       });
+       $('#sx').change(function() {
+         var sx = parseFloat($('#sx').val()); 
+         var sy = Math.round(sx / getAspect());
+         $('#sy').val(sy);
+       });
+       $('#sy').change(function() {
+         var sy = parseFloat($('#sy').val()); 
+         var sx = Math.round(sy * getAspect());
+         $('#sx').val(sx);
+       });
    });
 
   function getAspect()
@@ -107,6 +117,14 @@
 <div id="param-other">
   <label for="iter">Iter:</label> 
   <input id="iter" size="5" type="text" name="iter" value="{{.Iter}}" />
+  <label for="pal">Palette:</label>
+  <select id="pal" name="pal">
+  {{$sp := .Pal}}{{range $pn, $pl := .Palettes}}
+     <option value="{{$pn}}" {{if eq $pn $sp}}selected="selected"{{end}}>
+       {{$pn}}
+     </option>
+  {{end}}
+  </select>
 </div>
 <div id="param-actions">
   <input type="submit" value="Replot" /> [<a href="/">Reset</a>]

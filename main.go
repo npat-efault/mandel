@@ -15,22 +15,23 @@ package main
 import (
 	"fmt"
 	"html/template"
-	"image"
+	"image/color"
 	"image/png"
 	"net/http"
 	"os"
 	"path"
 	"strconv"
+	"time"
 )
 
 const (
 	// Image size (in pixels)
 	minSx = 320
-	maxSx = 5120
+	maxSx = 10240
 	dflSx = 640
-	minSy = 240
-	maxSy = 4096
-	dflSy = 480
+	minSy = 256
+	maxSy = 8192
+	dflSy = 512
 	// Number of iterations to perform for every pixel, when
 	// rendering the image
 	minIter = 16
@@ -46,7 +47,17 @@ const (
 	maxY  = 1.2
 	dflY0 = minY
 	dflY1 = maxY
+	// Default palette
+	dflPal = "Gray"
 )
+
+var palettes = map[string]color.Palette{
+	"Blue 1":       pal256Blue1,
+	"Blue 2":       pal256Blue2,
+	"Gold 1":       pal256Gold1,
+	"Gold 2":       pal256Gold2,
+	"Gray":         pal256Gray,
+	"Gray Reverse": pal256GrayR}
 
 var templates *template.Template
 
@@ -85,17 +96,30 @@ func valFloat64(r *http.Request, p string,
 	return v
 }
 
+func valPalette(r *http.Request, p string,
+	valid map[string]color.Palette, dfl string) string {
+	s := r.FormValue(p)
+	_, ok := valid[s]
+	if !ok {
+		s = dfl
+	}
+	return s
+}
+
 type params struct {
 	Sx, Sy         int
 	Iter           int
 	X0, Y0, X1, Y1 float64
+	Pal            string
+	Palettes       map[string]color.Palette
 }
 
 func (p *params) URL() template.URL {
 	s := fmt.Sprintf(
-		"sx=%d&sy=%d&iter=%d&x0=%g&y0=%g&x1=%g&y1=%g",
+		"sx=%d&sy=%d&iter=%d&x0=%g&y0=%g&x1=%g&y1=%g&pal=%s",
 		p.Sx, p.Sy, p.Iter,
-		p.X0, p.Y0, p.X1, p.Y1)
+		p.X0, p.Y0, p.X1, p.Y1,
+		p.Pal)
 	return template.URL(s)
 }
 
@@ -111,14 +135,21 @@ func getParams(r *http.Request) *params {
 	p.X1 = valFloat64(r, "x1", minX, maxX, dflX1)
 	p.Y0 = valFloat64(r, "y0", minY, maxY, dflY0)
 	p.Y1 = valFloat64(r, "y1", minY, maxY, dflY1)
+	// Parse pal (palette name) parameter
+	p.Pal = valPalette(r, "pal", palettes, dflPal)
+	p.Palettes = palettes
 	return p
 }
 
 func mandelHandler(w http.ResponseWriter, r *http.Request) {
+	// Parse params and calculate image
 	p := getParams(r)
-	img := image.NewGray(image.Rect(0, 0, p.Sx, p.Sy))
-	drawMandel(img,
-		complex(p.X0, p.Y0), complex(p.X1, p.Y1), p.Iter)
+	img, _ := NewMandelImg(p.Sx, p.Sy, p.Palettes[p.Pal],
+		complex(p.X0, p.Y0), complex(p.X1, p.Y1), p.Iter, 100.0)
+	// Allow caching forever
+	t := time.Now().Add(365 * 24 * time.Hour)
+	w.Header().Set("Expires", t.Format(http.TimeFormat))
+	// Encode and send image
 	png.Encode(w, img)
 }
 
