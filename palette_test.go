@@ -56,9 +56,9 @@ func TestLinterp(t *testing.T) {
 	do(100000, 0, 255)
 }
 
-func TestPalGray256(t *testing.T) {
+func TestPal256Gray(t *testing.T) {
 	for i := 0; i < 256; i++ {
-		c := palGray256[i].(color.RGBA)
+		c := pal256Gray[i].(color.RGBA)
 		i8 := uint8(i)
 		if c.R != i8 || c.G != i8 || c.B != i8 || c.A != 0xff {
 			t.Fatalf("%d:%v", i, c)
@@ -66,9 +66,9 @@ func TestPalGray256(t *testing.T) {
 	}
 }
 
-func TestPalGrayR256(t *testing.T) {
+func TestPal256GrayR(t *testing.T) {
 	for i := 255; i >= 0; i-- {
-		c := palGrayR256[255-i].(color.RGBA)
+		c := pal256GrayR[255-i].(color.RGBA)
 		i8 := uint8(i)
 		if c.R != i8 || c.G != i8 || c.B != i8 || c.A != 0xff {
 			t.Fatalf("%d:%v", 255-i, c)
