@@ -5,7 +5,7 @@ d=$(dirname "$0")
 DATADIR="$d"/data
 
 if [ $# -lt 1 ]; then
-    cmd=build
+    cmd=install
 else
     cmd="$1"; shift
 fi
@@ -18,6 +18,7 @@ case "$cmd" in
     clean)
 	go clean "$@" "$d"
 	rm -f "$d"/data.go
+	rm -f "$d"/*~
 	;;
     *)
 	echo "$0: Nothing to do for $cmd"
